@@ -135,6 +135,24 @@ h1 {
     background: #5a67d8;
 }
 
+.card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-btn {
+    background: transparent;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.delete-btn:hover {
+    color: red;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .board {

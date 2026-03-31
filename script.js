@@ -2,6 +2,7 @@ const cards = document.querySelectorAll('.card');
 const lists = document.querySelectorAll('.list');
 const addBtns = document.querySelectorAll('.add-btn');
 const inputs = document.querySelectorAll('.input');
+const newCard = document.createElement('div');
 
 let cardIdCounter = 100;
 
@@ -48,11 +49,36 @@ addBtns.forEach((btn, index) => {
         newCard.classList.add('card');
         newCard.setAttribute('draggable', 'true');
         newCard.id = 'card' + cardIdCounter++;
-        newCard.textContent = text;
+
+        // Text
+        const textSpan = document.createElement('span');
+        textSpan.textContent = text;
+
+        // Edit
+        textSpan.addEventListener('dblclick', () => {
+            const newText = prompt("Bearbeite:", textSpan.textContent);
+            if (newText && newText.trim() !== "") {
+                textSpan.textContent = newText;
+                saveBoard();
+            }
+        });
+
+        // Delete
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = "✖";
+        deleteBtn.classList.add('delete-btn');
+
+        deleteBtn.addEventListener('click', () => {
+            newCard.remove();
+            saveBoard();
+        });
+
+        newCard.appendChild(textSpan);
+        newCard.appendChild(deleteBtn);
 
         addDragEvents(newCard);
-
         lists[index].appendChild(newCard);
+
         inputs[index].value = '';
 
         saveBoard();
@@ -93,7 +119,30 @@ function loadBoard() {
             card.classList.add('card');
             card.setAttribute('draggable', 'true');
             card.id = item.id;
-            card.textContent = item.text;
+
+            const textSpan = document.createElement('span');
+            textSpan.textContent = item.text;
+
+            // Edit
+            textSpan.addEventListener('dblclick', () => {
+                const newText = prompt("Bearbeite:", textSpan.textContent);
+                if (newText && newText.trim() !== "") {
+                    textSpan.textContent = newText;
+                    saveBoard();
+                }
+            });
+
+            // Delete
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = "✖";
+
+            deleteBtn.addEventListener('click', () => {
+                card.remove();
+                saveBoard();
+            });
+
+            card.appendChild(textSpan);
+            card.appendChild(deleteBtn);
 
             addDragEvents(card);
             list.appendChild(card);
@@ -101,5 +150,4 @@ function loadBoard() {
     });
 }
 
-// Beim Laden ausführen
 loadBoard();
