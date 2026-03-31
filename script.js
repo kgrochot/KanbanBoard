@@ -1,49 +1,105 @@
 const cards = document.querySelectorAll('.card');
 const lists = document.querySelectorAll('.list');
+const addBtns = document.querySelectorAll('.add-btn');
+const inputs = document.querySelectorAll('.input');
 
-// Events für Karten
+let cardIdCounter = 100;
+
+// ================= DRAG & DROP =================
 cards.forEach(card => {
-    card.addEventListener('dragstart', dragStart);
-    card.addEventListener('dragend', dragEnd);
+    addDragEvents(card);
 });
 
-// Events für Listen
 lists.forEach(list => {
-    list.addEventListener('dragover', dragOver);
-    list.addEventListener('dragenter', dragEnter);
-    list.addEventListener('dragleave', dragLeave);
-    list.addEventListener('drop', dragDrop);
+    list.addEventListener('dragover', e => e.preventDefault());
+    list.addEventListener('dragenter', function () {
+        this.classList.add('over');
+    });
+    list.addEventListener('dragleave', function () {
+        this.classList.remove('over');
+    });
+    list.addEventListener('drop', function (e) {
+        const cardId = e.dataTransfer.getData('text/plain');
+        const card = document.getElementById(cardId);
+        this.appendChild(card);
+        this.classList.remove('over');
+        saveBoard();
+    });
 });
 
-function dragStart(e) {
-    e.dataTransfer.setData('text/plain', e.target.id);
-    setTimeout(() => {
-        e.target.classList.add('hide');
-    }, 0);
+function addDragEvents(card) {
+    card.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', e.target.id);
+        setTimeout(() => card.classList.add('hide'), 0);
+    });
+
+    card.addEventListener('dragend', () => {
+        card.classList.remove('hide');
+    });
 }
 
-function dragEnd(e) {
-    e.target.classList.remove('hide');
+// ================= ADD CARD =================
+addBtns.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+        const text = inputs[index].value.trim();
+        if (!text) return;
+
+        const newCard = document.createElement('div');
+        newCard.classList.add('card');
+        newCard.setAttribute('draggable', 'true');
+        newCard.id = 'card' + cardIdCounter++;
+        newCard.textContent = text;
+
+        addDragEvents(newCard);
+
+        lists[index].appendChild(newCard);
+        inputs[index].value = '';
+
+        saveBoard();
+    });
+});
+
+// ================= SAVE =================
+function saveBoard() {
+    const data = [];
+
+    lists.forEach(list => {
+        const cards = list.querySelectorAll('.card');
+        const listData = [];
+
+        cards.forEach(card => {
+            listData.push({
+                id: card.id,
+                text: card.textContent
+            });
+        });
+
+        data.push(listData);
+    });
+
+    localStorage.setItem('kanbanData', JSON.stringify(data));
 }
 
-function dragOver(e) {
-    e.preventDefault(); // wichtig!
+// ================= LOAD =================
+function loadBoard() {
+    const data = JSON.parse(localStorage.getItem('kanbanData'));
+    if (!data) return;
+
+    lists.forEach((list, index) => {
+        list.querySelectorAll('.card').forEach(card => card.remove());
+
+        data[index].forEach(item => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.setAttribute('draggable', 'true');
+            card.id = item.id;
+            card.textContent = item.text;
+
+            addDragEvents(card);
+            list.appendChild(card);
+        });
+    });
 }
 
-function dragEnter(e) {
-    e.preventDefault();
-    this.classList.add('over');
-}
-
-function dragLeave() {
-    this.classList.remove('over');
-}
-
-function dragDrop(e) {
-    e.preventDefault();
-    const cardId = e.dataTransfer.getData('text/plain');
-    const card = document.getElementById(cardId);
-
-    this.appendChild(card); // wichtig: this statt e.target
-    this.classList.remove('over');
-}
+// Beim Laden ausführen
+loadBoard();

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="container">
         <h1>Kanban Board</h1>
@@ -14,20 +16,27 @@
             <!-- List 1-->
             <div class="list" id="list1">
                 <h2>To Do</h2>
+                <input type="text" class="input" placeholder="Neue Aufgabe..." />
+                <button class="add-btn">+</button>
                 <div class="card" id="card1" draggable="true">Einkaufen</div>
                 <div class="card" id="card2" draggable="true">8 minute Routine</div>
             </div>
             <!-- List 2-->
             <div class="list" id="list2">
                 <h2>In Progress</h2>
+                <input type="text" class="input" placeholder="Neue Aufgabe..." />
+                <button class="add-btn">+</button>
                 <div class="card" id="card3" draggable="true">Projektarbeit</div>
             </div>
             <!-- List 3-->
             <div class="list" id="list3">
                 <h2>Done</h2>
+                <input type="text" class="input" placeholder="Neue Aufgabe..." />
+                <button class="add-btn">+</button>
             </div>
         </div>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>
